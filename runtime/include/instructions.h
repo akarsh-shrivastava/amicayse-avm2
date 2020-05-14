@@ -46,4 +46,6 @@
     };
 
     extern void (*inst_set_ptr[80])(wordsized*, wordsized, wordsized*, wordsized, wordsized*, wordsized);
+
+    void init_inst_set_ptr();
 #endif

@@ -104,14 +104,14 @@ void rput(wordsized* seg0, wordsized src, wordsized* dummy0, wordsized size, wor
 // stack
 void push_m(wordsized* seg0, wordsized src, wordsized* dummy0, wordsized dummy1, wordsized* dummy2, wordsized dummy3){
     ++reg_sp;
-    *(reg_ss+reg_sp) = *(seg0+src);
+    *((seg_reg[REG_SS])+reg_sp) = *(seg0+src);
 }
 void push_l(wordsized* dummy0, wordsized src, wordsized* dummy1, wordsized dummy2, wordsized* dummy3, wordsized dummy4){
     ++reg_sp;
-    *(reg_ss+reg_sp) = src;
+    *((seg_reg[REG_SS])+reg_sp) = src;
 }
 void pop_m(wordsized* seg0, wordsized dest, wordsized* dummy0, wordsized dummy1, wordsized* dummy2, wordsized dummy3){
-    *(seg0+dest) = *(reg_ss+reg_sp);
+    *(seg0+dest) = *((seg_reg[REG_SS])+reg_sp);
     --reg_sp;
 }
 void pop_l(wordsized* dummy0, wordsized dummy1, wordsized* dummy2, wordsized dummy3, wordsized* dummy4, wordsized dummy5){

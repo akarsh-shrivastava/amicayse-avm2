@@ -3,16 +3,19 @@ TARGET    =     avm2
 CC        =     gcc
 LD        =     gcc
 
-INCLUDES  =     include
+INCLUDES =     include
 COBJ     =     .obj
 CSRC     =     src
 
-HEADERS   =     $(INCLUDES)/*.h
+HEADERS  =     $(INCLUDES)/*.h
 CSOURCE  =     $(CSRC)/*.c
-COBJECT  =     $(COBJ)/.o      # add filenames here
+COBJECT  =     $(COBJ)/memory.o \
+               $(COBJ)/instructions.o \
+               $(COBJ)/execute.o \
+               $(COBJ)/main.o
+
 
 CFLAGS    =    -c -I$(INCLUDES) -fPIC -O3
-# LDFLAGS    =    -shared
 
 $(TARGET): $(COBJECT)
 	$(LD) $^ $(LDFLAGS) -o $@ 
