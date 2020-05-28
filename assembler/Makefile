@@ -17,10 +17,11 @@ FXTARGET  =     $(FXTAR)/lexer.cpp
 HEADERS   =     $(INCLUDES)/*.h
 CXSOURCE  =     $(CXSRC)/*.cpp
 CXOBJECT  =     $(CXOBJ)/lexer.o \
+                $(CXOBJ)/parser.o \
                 $(CXOBJ)/main.o
 
 CXFLAGS    =    -c -I$(INCLUDES) -fPIC -O3 --std=c++17
-# LDFLAGS    =    -shared
+LDFLAGS    =    -lparsegen
 
 $(TARGET): $(CXOBJECT)
 	$(LD) $^ $(LDFLAGS) -o $@ 
