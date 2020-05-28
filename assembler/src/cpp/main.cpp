@@ -22,29 +22,24 @@ int main(int argc, char** argv)
     if(!f)
     {
         std::cerr<<"No such file\n";
-        exit(1);
+        exit(-1);
     }
     f.close();
     if (filename.substr(dot_pos) != ".lasm")
     {
         std::cerr<<"invalid file type\n";
-        exit(1);
+        exit(-1);
     }
     filename = filename.substr(0,dot_pos);
 
     lexer(filename+".lasm");
-
-    for (std::vector<Token>::iterator i = tokens.begin(); i != tokens.end(); ++i)
-    {
-        i->print();
-    }
-
-    /*Parser p;
+    
+    Parser p;
     ParseTreeNode *t = p.get_tree();
-    if(t){
-        t->preorder();
-        delete t;
-    }*/
+    if(!t){
+        exit(-1);
+    }
+    
 
     return 0;
 }

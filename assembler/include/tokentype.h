@@ -3,30 +3,31 @@
     #include <amicayse/utils.h>
     using namespace amicayse;
     enum amicayse::TokenType : int {
-        DELIMITOR,
-        HEXCONST,
-        DECCONST,
-        STRCONST,
-        CHRCONST,
+        DELIMITOR,      // 0
+        HEXCONST,       // 1
+        DECCONST,       // 2
+        STRCONST,       // 3
+        CHRCONST,       // 4
 
-        OBKT,
-        CBKT,
-        OBRC,
-        CBRC,
-        OPAR,
-        CPAR,
+        OBKT,           // 5
+        CBKT,           // 6
+        OBRC,           // 7
+        CBRC,           // 8
+        OPAR,           // 9
+        CPAR,           // 10
 
-        COMMA,
-        COLON,
+        COMMA,          // 11
+        COLON,          // 12
 
-        DOLLARSIGN,
-        REGISTER,
+        DOLLARSIGN,     // 13
+        REGISTER,       // 14
 
-        IDENTIFIER,
+        INSTRUCTION,    // 15
+        IDENTIFIER,     // 16
 
 
-        UNKNOWN,
-        EPSILON,
-        DOLLAR
+        UNKNOWN,        // 17
+        EPSILON,        // 18
+        DOLLAR          // 19
     };
 #endif
