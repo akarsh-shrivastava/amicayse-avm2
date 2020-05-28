@@ -15,6 +15,7 @@ HEX 0x[1-9a-fA-F][0-9a-fA-F]*|0
 
 
 WS  [\ ]|[\t]
+SIZE (q|l|w|b)
 
 %option noyywrap
 
