@@ -1,6 +1,6 @@
 movb $0, (0)
 loop0:
-	less $5, (0), (1)
+	less $5, (0x0), (1)
 	jmp (1), loop0
 
 halt
