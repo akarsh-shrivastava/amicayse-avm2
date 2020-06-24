@@ -27,10 +27,10 @@ Parser::Parser(): parsegen(0){
 
     parsegen.set_tokens(tokens);
 
-    parsegen.print_rules();  std::cout<<"\n";
-    parsegen.print_first();  std::cout<<"\n";
-    parsegen.print_follow(); std::cout<<"\n";
-    parsegen.print_table();  std::cout<<"\n";
+    //parsegen.print_rules();  std::cout<<"\n";
+    //parsegen.print_first();  std::cout<<"\n";
+    //parsegen.print_follow(); std::cout<<"\n";
+    //parsegen.print_table();  std::cout<<"\n";
 }
 
 ParseTreeNode* Parser::get_tree(){

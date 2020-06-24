@@ -26,8 +26,9 @@
         IDENTIFIER,     // 16
 
 
-        UNKNOWN,        // 17
-        EPSILON,        // 18
-        DOLLAR          // 19
+        SPECIAL,        // 17
+        UNKNOWN,        // 18
+        EPSILON,        // 19
+        DOLLAR          // 20
     };
 #endif

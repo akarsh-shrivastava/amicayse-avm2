@@ -5,6 +5,7 @@
 #include <cstdlib>
 
 #include "parser.h"
+#include "transformer.h"
 
 std::vector<Token> tokens;
 
@@ -34,12 +35,23 @@ int main(int argc, char** argv)
 
     lexer(filename+".lasm");
     
-    Parser p;
-    ParseTreeNode *t = p.get_tree();
-    if(!t){
+    Parser parser;
+    ParseTreeNode *pt_node = parser.get_tree(), *ast_node;
+    if(!pt_node){
         exit(-1);
     }
+    pt_node->preorder();
     
+    std::cout<<"\n\n\n";
+
+    Transformer t1(pt_node);
+    ast_node = t1.get_ast();
+    ast_node->preorder();
+
+    //pt_node->delete_all_subtrees();
+    ast_node->delete_all_subtrees();
+    delete ast_node;
+    delete pt_node;
 
     return 0;
 }
