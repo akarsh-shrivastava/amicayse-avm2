@@ -1,0 +1,7 @@
+movb $'H', (0)
+movb $'o', (1)
+movb $'l', (2)
+movb $'a', (3)
+movb $0  , (4)
+rputb $5 , (3)
+haltb
