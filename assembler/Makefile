@@ -19,6 +19,7 @@ CXSOURCE  =     $(CXSRC)/*.cpp
 CXOBJECT  =     $(CXOBJ)/lexer.o \
                 $(CXOBJ)/parser.o \
                 $(CXOBJ)/transformer.o \
+                $(CXOBJ)/generator.o \
                 $(CXOBJ)/main.o
 
 CXFLAGS    =    -c -I$(INCLUDES) -fPIC -O3 --std=c++17 -fpermissive

@@ -25,10 +25,8 @@
         INSTRUCTION,    // 15
         IDENTIFIER,     // 16
 
-
-        SPECIAL,        // 17
-        UNKNOWN,        // 18
-        EPSILON,        // 19
-        DOLLAR          // 20
+        UNKNOWN,        // 17
+        EPSILON,        // 18
+        DOLLAR          // 19
     };
 #endif

@@ -50,11 +50,10 @@ ParseTreeNode* Transformer::transformInst_(ParseTreeNode* p){
 
     if (first_grand_child->ter){
         if(first_grand_child->terminal->type == COLON){
-            ParseTreeNode* ret = new ParseTreeNode(new Token(SPECIAL, "label", 0));
-            ret->add_child(p);
-            delete *(p->children.begin());
+            first_grand_child->add_child(p);
             p->children.clear();
-            return ret;
+            delete first_child;
+            return first_grand_child;
         }
     }
     else{
