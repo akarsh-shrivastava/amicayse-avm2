@@ -18,7 +18,7 @@ Generator::Generator(ParseTreeNode *r, std::string f){
     inst_regex = {
         {std::string("halt"),  INST_EXIT},     //done
         {std::string("mov"),   INST_MOV_MM},   //done
-        {std::string("load"),  INST_LOAD_MM},  
+        {std::string("load"),  INST_LOAD_MM},  //  
         {std::string("mod"),   INST_MOD_MMM},  //done
         {std::string("div"),   INST_DIV_MMM},  //done
         {std::string("mul"),   INST_MUL_MMM},  //done
@@ -45,10 +45,10 @@ Generator::Generator(ParseTreeNode *r, std::string f){
         {std::string("rput"),  INST_RPUT},     //done
         {std::string("push"),  INST_PUSH_M},   //done
         {std::string("pop") ,  INST_POP_M},    //done
-        {std::string("loadsp"),INST_LOAD_SP},
-        {std::string("loadip"),INST_LOAD_IP},
-        {std::string("addsp"), INST_ADD_SP_M},
-        {std::string("subsp"), INST_SUB_SP_M}
+        {std::string("loadsp"),INST_LOAD_SP},  //done
+        {std::string("loadip"),INST_LOAD_IP},  //done
+        {std::string("addsp"), INST_ADD_SP_M}, //done
+        {std::string("subsp"), INST_SUB_SP_M}  //done
     };
     suffixes = std::string("b");
 }
@@ -135,7 +135,7 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         ch1 = (ParseTreeNode*)(p->children[1]);
         ch2 = (ParseTreeNode*)(p->children[2]);
 
-        // decode op0
+        // decode op2
         if(ch2->terminal->type == OPAR){
             seg2 = REG_DS;
         }
@@ -149,7 +149,7 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         }
         op2 = get_int((ParseTreeNode*)(ch2->children[0]));
 
-        // decode op1 & op2
+        // decode op0 & op1
         if(ch1->terminal->type == OPAR || ch1->terminal->type == OBKT){
             if(ch1->terminal->type == OPAR){
                 seg1 = REG_DS;
@@ -207,7 +207,7 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         ch1 = (ParseTreeNode*)(p->children[0]);
         ch2 = (ParseTreeNode*)(p->children[1]);
 
-        // decode op1
+        // decode op2
         if(ch2->terminal->type == OPAR){
             seg2 = REG_DS;
         }
@@ -221,7 +221,7 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         }
         op2 = get_int((ParseTreeNode*)(ch2->children[0]));
 
-        // decode op2
+        // decode op1
         if(ch1->terminal->type == OPAR){
             seg1 = REG_DS;
         }
@@ -264,7 +264,7 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         }
         op1 = get_int((ParseTreeNode*)(ch1->children[0]));
 
-        // decode op0
+        // decode op2
         if(ch2->terminal->type != DOLLARSIGN){
             error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
                      + inst+" requires 1st argument to be a literal\n";
@@ -300,8 +300,8 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
             return;
         }
     }
-    // 1 arg push
-    else if(inst=="push")
+    // 1 arg push, addsp, subsp
+    else if(inst=="push" || inst=="addsp" || inst=="subsp")
     {
         // size check
         if(p->children.size() != 1){
@@ -311,7 +311,7 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         }
         ch2 = (ParseTreeNode*)(p->children[0]);
         
-        // decode op0
+        // decode op2
         if(ch2->terminal->type == OPAR){
             seg2 = REG_DS;
         }
@@ -320,6 +320,36 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         }
         else if(ch2->terminal->type == DOLLARSIGN){
             off=1;
+        }
+        else{
+            error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                     + inst+" requires 1st argument to be a memory location or literal\n";
+            return;
+        }
+        op2 = get_int((ParseTreeNode*)(ch2->children[0]));
+    }
+    // 1 arg load sp & ip
+    else if(inst=="loadsp" || inst=="loadip")
+    {
+        // size check
+        if(p->children.size() != 1){
+            error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                     + inst+" requires 1 arguments, "+std::to_string(p->children.size())+" given\n";
+            return;
+        }
+        ch2 = (ParseTreeNode*)(p->children[0]);
+        
+        // decode op2
+        if(ch2->terminal->type == OPAR){
+            seg2 = REG_DS;
+        }
+        else if(ch2->terminal->type == OBKT){
+            seg2 = REG_SS;
+        }
+        else{
+            error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                     + inst+" requires 1st argument to be a memory location\n";
+            return;
         }
         op2 = get_int((ParseTreeNode*)(ch2->children[0]));
     }
