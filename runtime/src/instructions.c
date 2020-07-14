@@ -65,9 +65,9 @@ MM_INST(mov , )       ML_INST(mov , )
 void load_mm(wordsized* seg0, wordsized dest, wordsized* seg1, wordsized op1, wordsized* seg2, wordsized dummy0){
     *(seg0+dest) = *(seg2+*(seg1+op1));
 }
-void load_ml(wordsized* seg0, wordsized dest, wordsized* seg1, wordsized op1, wordsized* dummy0, wordsized dummy1){
+/*void load_ml(wordsized* seg0, wordsized dest, wordsized* seg1, wordsized op1, wordsized* dummy0, wordsized dummy1){
     *(seg0+dest) = *(seg1+op1);
-}
+}*/
 
 // jump instructions
 void jmp_c(wordsized* seg0, wordsized condition, wordsized* dummy0, wordsized addr, wordsized* dummy1, wordsized dummy2){
@@ -141,7 +141,7 @@ void (*inst_set_ptr[80])(wordsized*, wordsized, wordsized*, wordsized, wordsized
 
 void init_inst_set_ptr(){
     inst_set_ptr[INST_MOV_MM]  = &mov_mm  ; inst_set_ptr[INST_MOV_ML]  = &mov_ml  ;
-    inst_set_ptr[INST_LOAD_MM] = &load_mm ; inst_set_ptr[INST_LOAD_ML] = &load_ml ;
+    inst_set_ptr[INST_LOAD_MM] = &load_mm ; //inst_set_ptr[INST_LOAD_ML] = &load_ml ;
 
     inst_set_ptr[INST_MOD_MMM] = &mod_mmm ; inst_set_ptr[INST_MOD_MML] = &mod_mml ; inst_set_ptr[INST_MOD_MLL] = &mod_mll ;
     inst_set_ptr[INST_DIV_MMM] = &div_mmm ; inst_set_ptr[INST_DIV_MML] = &div_mml ; inst_set_ptr[INST_DIV_MLL] = &div_mll ;

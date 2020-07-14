@@ -6,7 +6,7 @@
         INST_EXIT,
 
         INST_MOV_MM  , INST_MOV_ML  ,
-        INST_LOAD_MM , INST_LOAD_ML ,
+        INST_LOAD_MM , //INST_LOAD_ML ,
 
         INST_MOD_MMM , INST_MOD_MML , INST_MOD_MLL ,
         INST_DIV_MMM , INST_DIV_MML , INST_DIV_MLL ,
