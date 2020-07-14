@@ -18,7 +18,7 @@ Generator::Generator(ParseTreeNode *r, std::string f){
     inst_regex = {
         {std::string("halt"),  INST_EXIT},     //done
         {std::string("mov"),   INST_MOV_MM},   //done
-        {std::string("load"),  INST_LOAD_MM},  //  
+        {std::string("load"),  INST_LOAD_MM},  //done
         {std::string("mod"),   INST_MOD_MMM},  //done
         {std::string("div"),   INST_DIV_MMM},  //done
         {std::string("mul"),   INST_MUL_MMM},  //done
@@ -306,7 +306,7 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         // size check
         if(p->children.size() != 1){
             error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
-                     + inst+" requires 1 arguments, "+std::to_string(p->children.size())+" given\n";
+                     + inst+" requires 1 argument, "+std::to_string(p->children.size())+" given\n";
             return;
         }
         ch2 = (ParseTreeNode*)(p->children[0]);
@@ -334,7 +334,7 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         // size check
         if(p->children.size() != 1){
             error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
-                     + inst+" requires 1 arguments, "+std::to_string(p->children.size())+" given\n";
+                     + inst+" requires 1 argument, "+std::to_string(p->children.size())+" given\n";
             return;
         }
         ch2 = (ParseTreeNode*)(p->children[0]);
@@ -352,6 +352,60 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
             return;
         }
         op2 = get_int((ParseTreeNode*)(ch2->children[0]));
+    }
+    // 3 arg all mem load
+    else if(inst=="load"){
+        // size check
+        if(p->children.size() != 3){
+            error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                     + inst+" requires 3 arguments, "+std::to_string(p->children.size())+" given\n";
+            return;
+        }
+        ch0 = (ParseTreeNode*)(p->children[0]);
+        ch1 = (ParseTreeNode*)(p->children[1]);
+        ch2 = (ParseTreeNode*)(p->children[2]);
+
+        // decode op2
+        if(ch2->terminal->type == OPAR){
+            seg2 = REG_DS;
+        }
+        else if(ch2->terminal->type == OBKT){
+            seg2 = REG_SS;
+        }
+        else{
+            error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                     + inst+" requires 3rd argument to be a memory location\n";
+            return;
+        }
+        op2 = get_int((ParseTreeNode*)(ch2->children[0]));
+
+        // decode op1
+        if(ch1->terminal->type == OPAR){
+            seg1 = REG_DS;
+        }
+        else if(ch1->terminal->type == OBKT){
+            seg1 = REG_SS;
+        }
+        else{
+            error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                     + inst+" requires 2nd argument to be a memory location\n";
+            return;
+        }
+        op1 = get_int((ParseTreeNode*)(ch1->children[0]));
+
+        // decode op0
+        if(ch0->terminal->type == OPAR){
+            seg0 = REG_DS;
+        }
+        else if(ch0->terminal->type == OBKT){
+            seg0 = REG_SS;
+        }
+        else{
+            error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                     + inst+" requires 1st argument to be a memory location\n";
+            return;
+        }
+        op0 = get_int((ParseTreeNode*)(ch0->children[0]));
     }
 
     code.push_back(op_code+off);
