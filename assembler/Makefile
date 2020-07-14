@@ -14,7 +14,8 @@ FXTAR     =     src/cpp
 FXSOURCE  =     $(FXSRC)/*.l
 FXTARGET  =     $(FXTAR)/lexer.cpp
 
-HEADERS   =     $(INCLUDES)/*.h
+HEADERS   =     $(INCLUDES)/*.h \
+                ../runtime/include/*.h
 CXSOURCE  =     $(CXSRC)/*.cpp
 CXOBJECT  =     $(CXOBJ)/lexer.o \
                 $(CXOBJ)/parser.o \
