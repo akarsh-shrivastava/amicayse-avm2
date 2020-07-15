@@ -7,22 +7,22 @@
     #include "tokentype.h"
     class Generator{
         ParseTreeNode *root;
-        std::string filename;
         std::map<std::string, unsigned char> label_table;
         std::string error_msg;
         std::string code;
-        //unsigned char code_ptr;
         unsigned char label_ptr;
         int child_itr, label_itr;
 
-        //std::vector<std::pair<std::string, unsigned char>> inst_regex;
         std::map<std::string, unsigned char> inst_regex;
         std::string suffixes;
 
         void add_code(std::string, std::string, ParseTreeNode*);
         unsigned char get_label_addr(std::string);
+        unsigned char get_int(ParseTreeNode *p);
         public:
-        Generator(ParseTreeNode*, std::string);
+        Generator(ParseTreeNode*);
         void write_code();
+        std::string get_code();
+        std::string get_error();
     };
 #endif

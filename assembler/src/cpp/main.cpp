@@ -44,10 +44,20 @@ int main(int argc, char** argv)
 
     Transformer transformer1(pt_node);
     ast_node = transformer1.get_ast();
-    ast_node->preorder();
+    //ast_node->preorder();
     
-    Generator generator1(ast_node, filename);
+    Generator generator1(ast_node);
     generator1.write_code();
+    std::string err = generator1.get_error();
+    if(err.empty()){
+        std::string code = generator1.get_code();
+        //std::cout<<code<<std::endl;
+        std::ofstream fout(filename+".avm2", std::ios::binary);
+        fout.write(code.c_str(), code.size());
+    }
+    else{
+        std::cerr<<err;
+    }
     ast_node->delete_all_subtrees();
     delete ast_node;
     return 0;

@@ -4,17 +4,49 @@ extern "C"{
     #include "../../../runtime/include/memory.h"
 };
 
-unsigned char get_int(ParseTreeNode *p){
-    if (p->terminal->type == CHRCONST)
-        return (unsigned char)((p->terminal->lexeme)[1]);
+unsigned char Generator::get_int(ParseTreeNode *p){
+    if (p->terminal->type == CHRCONST){
+        std::string ch=p->terminal->lexeme;
+        if(ch.size()==3)
+            return (unsigned char)(ch[1]);
+        else if(ch.size()==4){
+            if(ch[1]=='\\'){
+                switch(ch[2]){
+                    case 'a': return '\a';
+                    case 'b': return '\b';
+                    case 'e': return '\e';
+                    case 'f': return '\f';
+                    case 'n': return '\n';
+                    case 'r': return '\r';
+                    case 't': return '\t';
+                    case 'v': return '\v';
+                    case '0': return '\0';
+                }
+                error_msg+="Error at line "+std::to_string(p->terminal->line)
+                         + ": Invalid character constant "+ch+"\n";
+                return 0;
+            }
+            else{
+                error_msg+="Error at line "+std::to_string(p->terminal->line)
+                         + ": Invalid character constant "+ch+"\n";
+                return 0;
+            }
+        }
+        else{
+            error_msg+="Error at line "+std::to_string(p->terminal->line)
+                     + ": Invalid character constant "+ch+"\n";
+            return 0;
+        }
+    
+    }
     else
         return (unsigned char)std::stoull(p->terminal->lexeme, nullptr, 0);;
 }
 
-Generator::Generator(ParseTreeNode *r, std::string f){
-	root = r;
-	filename = f;
+Generator::Generator(ParseTreeNode *r){
+    root = r;
     label_ptr = 0;
+    code="avm2";
     inst_regex = {
         {std::string("halt"),  INST_EXIT},     //done
         {std::string("mov"),   INST_MOV_MM},   //done
@@ -40,7 +72,7 @@ Generator::Generator(ParseTreeNode *r, std::string f){
         {std::string("bnot"),  INST_BNOT_MM},  //done
         {std::string("bneg"),  INST_BNEG_MM},  //done
         {std::string("lnot"),  INST_LNOT_MM},  //done
-        {std::string("jmp"),   INST_JMP_C},    //
+        {std::string("jmp"),   INST_JMP_C},    //done
         {std::string("rget"),  INST_RGET},     //done
         {std::string("rput"),  INST_RPUT},     //done
         {std::string("push"),  INST_PUSH_M},   //done
@@ -51,6 +83,13 @@ Generator::Generator(ParseTreeNode *r, std::string f){
         {std::string("subsp"), INST_SUB_SP_M}  //done
     };
     suffixes = std::string("b");
+}
+
+std::string Generator::get_code(){
+    return code;
+}
+std::string Generator::get_error(){
+    return error_msg;
 }
 
 void Generator::write_code(){
@@ -98,22 +137,13 @@ void Generator::write_code(){
                      +": Invalid line, only instructions and label declarations allowed\n";
         }
     }
-
-    for(int i=0; i<code.size(); ++i){
-        if(i%16 == 0)
-            std::cout<<std::endl;
-        printf("%3d ", code[i]);
-        //std::cout<<(int)code[i]<<" ";
-    }
-    std::cout<<std::endl<<error_msg<<std::endl;
 }
 
 void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p){
-	unsigned char op_code = inst_regex[inst], off=0,
+    unsigned char op_code = inst_regex[inst], off=0,
                   seg0=0, op0=0, seg1=0, op1=0, seg2=0, op2=0;
 
     ParseTreeNode *ch0=NULL, *ch1=NULL, *ch2=NULL;
-    p->terminal->println();
     if (inst == "halt")
     {
         if(p->children.size() != 0){
@@ -250,27 +280,27 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
                      + inst+" requires 2 arguments, "+std::to_string(p->children.size())+" given\n";
             return;
         }
-        ch2 = (ParseTreeNode*)(p->children[0]);
-        ch1 = (ParseTreeNode*)(p->children[1]);
+        ch1 = (ParseTreeNode*)(p->children[0]);
+        ch2 = (ParseTreeNode*)(p->children[1]);
 
         // decode op1
-        if(ch1->terminal->type == OPAR){
-            seg1 = REG_DS;
-        }
-        else if(ch1->terminal->type == OBKT){
-            seg1 = REG_SS;
-        }
-        else{
+        if(ch1->terminal->type != DOLLARSIGN){
             error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
-                     + inst+" requires 2nd argument to be a memory location\n";
+                     + inst+" requires 1st argument to be a literal\n";
             return;
         }
         op1 = get_int((ParseTreeNode*)(ch1->children[0]));
 
         // decode op2
-        if(ch2->terminal->type != DOLLARSIGN){
+        if(ch2->terminal->type == OPAR){
+            seg2 = REG_DS;
+        }
+        else if(ch2->terminal->type == OBKT){
+            seg2 = REG_SS;
+        }
+        else{
             error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
-                     + inst+" requires 1st argument to be a literal\n";
+                     + inst+" requires 2nd argument to be a memory location\n";
             return;
         }
         op2 = get_int((ParseTreeNode*)(ch2->children[0]));
