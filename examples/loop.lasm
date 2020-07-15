@@ -2,5 +2,5 @@ movb $0, (0)
 loop0:
 	addb $1, (0), (0)
 	leqb $5, (0x0), (1)
-	jmpb (1), loop0
+	jmpb loop0, (1)
 haltb
