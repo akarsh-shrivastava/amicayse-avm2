@@ -55,9 +55,12 @@ Generator::Generator(ParseTreeNode *r, std::string f){
 
 void Generator::write_code(){
     int size = root->children.size();
-    for(int i=0; i<size; i++){
-        ParseTreeNode *node = (ParseTreeNode*)root->children[i];
+    for(child_itr=0; child_itr<size; ++child_itr){
+        ParseTreeNode *node = (ParseTreeNode*)root->children[child_itr];
         if (node->terminal->type == COLON){
+            if (label_itr > child_itr){
+                continue;
+            }
             ParseTreeNode *label_node = (ParseTreeNode*)(node->children[0]);
             try{
                 label_table.at(label_node->terminal->lexeme);
@@ -407,6 +410,58 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
         }
         op0 = get_int((ParseTreeNode*)(ch0->children[0]));
     }
+    // 1 or 2 arg jmp
+    else if(inst=="jmp")
+    {
+        // size check
+        if(p->children.size() == 1){
+            off=1;
+            ch2 = (ParseTreeNode*)(p->children[0]);
+            if(ch2->terminal->type == IDENTIFIER){
+                op2 = get_label_addr(ch2->terminal->lexeme);
+                if(op2 == -1){
+                    error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                             + " Undefined label '"+ch2->terminal->lexeme+"'\n";
+                    return;
+                }
+            }
+            else{
+                error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                         + inst+" requires 1st argument to be a label\n";
+                return;
+            }
+        }
+        else if(p->children.size() == 2){
+            ch2 = (ParseTreeNode*)(p->children[0]);
+            if(ch2->terminal->type == IDENTIFIER){
+                op2 = get_label_addr(ch2->terminal->lexeme);
+            }
+            else{
+                error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                         + inst+" requires 1st argument to be a label\n";
+                return;
+            }
+
+            ch1 = (ParseTreeNode*)(p->children[1]);
+            if(ch1->terminal->type == OPAR){
+                seg1 = REG_DS;
+            }
+            else if(ch1->terminal->type == OPAR){
+                seg1 = REG_SS;
+            }
+            else{
+                error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                         + inst+" requires 1st argument to be a label\n";
+                return;
+            }
+            op1 = get_int((ParseTreeNode*)(ch1->children[0]));
+        }
+        else{
+            error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                     + inst+" requires 1 or 2 arguments, "+std::to_string(p->children.size())+" given\n";
+            return;
+        }
+    }
 
     code.push_back(op_code+off);
     code.push_back(seg2);
@@ -416,6 +471,31 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
     code.push_back(seg0);
     code.push_back(op0);
 
+}
+
+unsigned char Generator::get_label_addr(std::string label){
+    try{
+        return label_table.at(label);
+    }
+    catch(std::out_of_range ex){}
+
+    int size = root->children.size();
+    for( (label_itr < child_itr)? label_itr=child_itr : false  ; label_itr > size; ++label_itr){
+        ParseTreeNode *node = (ParseTreeNode*)root->children[label_itr];
+        if (node->terminal->type == COLON){
+            ParseTreeNode *label_node = (ParseTreeNode*)(node->children[0]);
+            try{
+                label_table.at(label_node->terminal->lexeme);
+                error_msg+="Error at line "+std::to_string(label_node->terminal->line)+": Multiple definitions of the same label\n";
+            }
+            catch(std::out_of_range ex){
+                label_table[label_node->terminal->lexeme] = code.size();
+            }
+            if(label_node->terminal->lexeme == label)
+                return label_table.at(label_node->terminal->lexeme);
+        }
+    }
+    return -1;
 }
 /*for(std::map<std::string, unsigned char>::iterator itr=label_table.begin(); itr!=label_table.end(); ++itr){
     std::cout<<itr->first<<": "<<(unsigned int)itr->second<<std::endl;
