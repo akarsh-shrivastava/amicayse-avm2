@@ -70,7 +70,7 @@ void load_mm(wordsized* seg0, wordsized dest, wordsized* seg1, wordsized op1, wo
 }*/
 
 // jump instructions
-void jmp_c(wordsized* seg0, wordsized condition, wordsized* dummy0, wordsized addr, wordsized* dummy1, wordsized dummy2){
+void jmp_c(wordsized* dummy0, wordsized addr, wordsized* seg0, wordsized condition, wordsized* dummy1, wordsized dummy2){
     if(*(seg0+condition)){
         reg_ip = addr;
     }
