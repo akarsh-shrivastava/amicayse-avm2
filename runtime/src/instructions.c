@@ -43,7 +43,7 @@ MMM_INST(geq , >=)    MML_INST(geq , >=)      MLL_INST(geq , >=)
 MMM_INST(equ , ==)    MML_INST(equ , ==)      MLL_INST(equ , ==)
 MMM_INST(neq , !=)    MML_INST(neq , !=)      MLL_INST(neq , !=)
 MMM_INST(les , <)     MML_INST(les , <)       MLL_INST(les , <)
-MMM_INST(leq , >=)    MML_INST(leq , >=)      MLL_INST(leq , >=)
+MMM_INST(leq , <=)    MML_INST(leq , <=)      MLL_INST(leq , <=)
 
 #define MM_INST(name, operator) \
 void name##_mm(wordsized* seg0, wordsized dest, wordsized* seg1, wordsized op1, wordsized* dummy0, wordsized dummy1){\
@@ -72,11 +72,11 @@ void load_mm(wordsized* seg0, wordsized dest, wordsized* seg1, wordsized op1, wo
 // jump instructions
 void jmp_c(wordsized* dummy0, wordsized addr, wordsized* seg0, wordsized condition, wordsized* dummy1, wordsized dummy2){
     if(*(seg0+condition)){
-        reg_ip = addr;
+        reg_ip = addr-7;
     }
 }
 void jmp_u(wordsized* dummy0, wordsized addr, wordsized* dummy1, wordsized dummy2, wordsized* dummy3, wordsized dummy4){
-    reg_ip = addr;
+    reg_ip = addr-7;
 }
 // memalloc
 
