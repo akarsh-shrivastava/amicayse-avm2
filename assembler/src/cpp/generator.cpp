@@ -94,21 +94,26 @@ std::string Generator::get_error(){
 
 void Generator::write_code(){
     int size = root->children.size();
-    for(child_itr=0; child_itr<size; ++child_itr){
-        ParseTreeNode *node = (ParseTreeNode*)root->children[child_itr];
+    int lbl = 0;
+    for (int i=0; i<size; ++i){
+        ParseTreeNode *node = (ParseTreeNode*)root->children[i];
         if (node->terminal->type == COLON){
-            if (label_itr > child_itr){
-                continue;
-            }
             ParseTreeNode *label_node = (ParseTreeNode*)(node->children[0]);
             try{
                 label_table.at(label_node->terminal->lexeme);
                 error_msg+="Error at line "+std::to_string(label_node->terminal->line)+": Multiple definitions of the same label\n";
             }
             catch(std::out_of_range ex){
-                label_table[label_node->terminal->lexeme] = code.size();
+                label_table[label_node->terminal->lexeme] = lbl;
             }
         }
+        else if(node->terminal->type == IDENTIFIER){
+            lbl+=7;
+        }
+    }
+    for(int i=0; i<size; ++i){
+        ParseTreeNode *node = (ParseTreeNode*)root->children[i];
+        if (node->terminal->type == COLON){}
         else if(node->terminal->type == IDENTIFIER){
             bool notFound = true;
             for (std::map<std::string, unsigned char>::iterator itr = inst_regex.begin(); itr != inst_regex.end(); ++itr){
@@ -465,6 +470,11 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
             ch2 = (ParseTreeNode*)(p->children[0]);
             if(ch2->terminal->type == IDENTIFIER){
                 op2 = get_label_addr(ch2->terminal->lexeme);
+                if(op2 == -1){
+                    error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
+                             + " Undefined label '"+ch2->terminal->lexeme+"'\n";
+                    return;
+                }
             }
             else{
                 error_msg+="Error at line "+std::to_string(p->terminal->line)+": "
@@ -507,25 +517,9 @@ unsigned char Generator::get_label_addr(std::string label){
     try{
         return label_table.at(label);
     }
-    catch(std::out_of_range ex){}
-
-    int size = root->children.size();
-    for( (label_itr < child_itr)? label_itr=child_itr : false  ; label_itr > size; ++label_itr){
-        ParseTreeNode *node = (ParseTreeNode*)root->children[label_itr];
-        if (node->terminal->type == COLON){
-            ParseTreeNode *label_node = (ParseTreeNode*)(node->children[0]);
-            try{
-                label_table.at(label_node->terminal->lexeme);
-                error_msg+="Error at line "+std::to_string(label_node->terminal->line)+": Multiple definitions of the same label\n";
-            }
-            catch(std::out_of_range ex){
-                label_table[label_node->terminal->lexeme] = code.size();
-            }
-            if(label_node->terminal->lexeme == label)
-                return label_table.at(label_node->terminal->lexeme);
-        }
+    catch(std::out_of_range ex){
+        return -1;
     }
-    return -1;
 }
 /*for(std::map<std::string, unsigned char>::iterator itr=label_table.begin(); itr!=label_table.end(); ++itr){
     std::cout<<itr->first<<": "<<(unsigned int)itr->second<<std::endl;

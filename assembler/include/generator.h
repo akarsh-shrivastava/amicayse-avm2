@@ -11,7 +11,6 @@
         std::string error_msg;
         std::string code;
         unsigned char label_ptr;
-        int child_itr, label_itr;
 
         std::map<std::string, unsigned char> inst_regex;
         std::string suffixes;
