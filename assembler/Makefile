@@ -34,3 +34,11 @@ $(CXOBJ)/%.o: $(CXSRC)/%.cpp $(HEADERS)
 
 $(FXTAR)/%.cpp: $(FXSRC)/%.l $(HEADERS)
 	$(FX) -o$@ $<
+
+install:
+	make
+	cp $(TARGET) $(HOME)/.amicayse/bin
+
+update:
+	git pull origin master
+	make install

@@ -23,3 +23,10 @@ $(TARGET): $(COBJECT)
 $(COBJ)/%.o: $(CSRC)/%.c $(HEADERS)
 	$(CC) $(CFLAGS) $< -o $@
 
+install:
+	make
+	cp $(TARGET) $(HOME)/.amicayse/bin
+
+update:
+	git pull origin master
+	make install
