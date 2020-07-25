@@ -39,6 +39,6 @@ install: $(TARGET)
 	cp $(TARGET) $(HOME)/.amicayse/bin
 
 update: pull install
-
+	echo "Updated"
 pull:
 	git pull origin master
