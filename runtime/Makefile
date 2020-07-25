@@ -23,8 +23,7 @@ $(TARGET): $(COBJECT)
 $(COBJ)/%.o: $(CSRC)/%.c $(HEADERS)
 	$(CC) $(CFLAGS) $< -o $@
 
-install:
-	make
+install: $(TARGET)
 	cp $(TARGET) $(HOME)/.amicayse/bin
 
 update:

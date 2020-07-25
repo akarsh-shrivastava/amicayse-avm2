@@ -14,7 +14,7 @@ wordsized reg_sp = -1;
 wordsized reg_flags = 0;
 
 void init_registers(){
-    seg_reg[REG_CS] = calloc(1, 255);
-    seg_reg[REG_DS] = calloc(1, 255);
-    seg_reg[REG_SS] = calloc(1, 255);
+    seg_reg[REG_CS] = calloc( sizeof(wordsized), pow(2, sizeof(wordsized)*8)-1 );
+    seg_reg[REG_DS] = calloc( sizeof(wordsized), pow(2, sizeof(wordsized)*8)-1 );
+    seg_reg[REG_SS] = calloc( sizeof(wordsized), pow(2, sizeof(wordsized)*8)-1 );
 }

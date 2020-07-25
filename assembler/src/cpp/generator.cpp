@@ -504,11 +504,9 @@ void Generator::add_code(std::string inst, std::string suffix, ParseTreeNode* p)
     }
 
     code.push_back(op_code+off);
-    code.push_back(seg2);
+    code.push_back( seg2<<4 | seg1<<2 | seg0 );
     code.push_back(op2);
-    code.push_back(seg1);
     code.push_back(op1);
-    code.push_back(seg0);
     code.push_back(op0);
 
 }

@@ -37,9 +37,9 @@ void execute(char flags){
             fprintf(logfile, "\n\n\nIP:%u", reg_ip);
 
         inst_set_ptr[*(seg_reg[REG_CS]+reg_ip)] (
-                    seg_reg[*(seg_reg[REG_CS]+reg_ip+1)], *(seg_reg[REG_CS]+reg_ip+2), 
-                    seg_reg[*(seg_reg[REG_CS]+reg_ip+3)], *(seg_reg[REG_CS]+reg_ip+4), 
-                    seg_reg[*(seg_reg[REG_CS]+reg_ip+5)], *(seg_reg[REG_CS]+reg_ip+6)
+                    seg_reg[(*(seg_reg[REG_CS]+reg_ip+1) & 0x30) >> 4 ]    , *(seg_reg[REG_CS]+reg_ip+2), 
+                    seg_reg[(*(seg_reg[REG_CS]+reg_ip+1) & 0xc)  >> 2 ]    , *(seg_reg[REG_CS]+reg_ip+3), 
+                    seg_reg[(*(seg_reg[REG_CS]+reg_ip+1) & 0x3)       ]    , *(seg_reg[REG_CS]+reg_ip+4)
         );
 
 
@@ -49,6 +49,6 @@ void execute(char flags){
             log_ss();
 
 
-        reg_ip+=7;
+        reg_ip+=5;
     }
 }
