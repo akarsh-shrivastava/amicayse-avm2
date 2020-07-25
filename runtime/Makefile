@@ -26,6 +26,7 @@ $(COBJ)/%.o: $(CSRC)/%.c $(HEADERS)
 install: $(TARGET)
 	cp $(TARGET) $(HOME)/.amicayse/bin
 
-update:
+update: pull install
+
+pull:
 	git pull origin master
-	make install
